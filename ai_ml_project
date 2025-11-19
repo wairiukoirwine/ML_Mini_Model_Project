@@ -1,0 +1,361 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMqT3g5ZQtK2lAzwWSDz1Rr",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/wairiukoirwine/ML_Mini_Model_Project/blob/main/ai_ml_project\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 4,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8IgHy9pVWLqm",
+        "outputId": "15a48618-0d27-44d5-8688-d8ca0a2812a1"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Cloning into 'ML_Mini_Model_Project'...\n",
+            "remote: Enumerating objects: 9, done.\u001b[K\n",
+            "remote: Counting objects: 100% (9/9), done.\u001b[K\n",
+            "remote: Compressing objects: 100% (4/4), done.\u001b[K\n",
+            "remote: Total 9 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)\u001b[K\n",
+            "Receiving objects: 100% (9/9), done.\n",
+            "/content/ML_Mini_Model_Project/ML_Mini_Model_Project\n"
+          ]
+        }
+      ],
+      "source": [
+        "!git clone https://github.com/wairiukoirwine/ML_Mini_Model_Project.git\n",
+        "%cd ML_Mini_Model_Project"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile house_prices.csv\n",
+        "Size_sqft,Bedrooms,Price\n",
+        "850,2,200000\n",
+        "900,2,210000\n",
+        "1000,3,250000\n",
+        "1200,3,280000\n",
+        "1500,4,350000\n",
+        "1700,4,400000\n",
+        "2000,5,500000\n",
+        "2200,5,550000\n",
+        "2500,6,600000\n",
+        "2700,6,650000\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "gOMr_AlHWxkc",
+        "outputId": "6e516943-20ef-4703-e5ec-a51ef0983040"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing house_prices.csv\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile ml_model.py\n",
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.tree import DecisionTreeRegressor\n",
+        "from sklearn.metrics import mean_squared_error, r2_score\n",
+        "import joblib\n",
+        "\n",
+        "# Load dataset\n",
+        "df = pd.read_csv(\"house_prices.csv\")\n",
+        "\n",
+        "# Features and target\n",
+        "X = df[[\"Size_sqft\", \"Bedrooms\"]]\n",
+        "y = df[\"Price\"]\n",
+        "\n",
+        "# Split dataset\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+        "\n",
+        "# Train Decision Tree Regressor\n",
+        "model = DecisionTreeRegressor(random_state=42)\n",
+        "model.fit(X_train, y_train)\n",
+        "\n",
+        "# Make predictions\n",
+        "y_pred = model.predict(X_test)\n",
+        "\n",
+        "# Evaluate\n",
+        "mse = mean_squared_error(y_test, y_pred)\n",
+        "r2 = r2_score(y_test, y_pred)\n",
+        "\n",
+        "print(\"Mean Squared Error:\", mse)\n",
+        "print(\"R2 Score:\", r2)\n",
+        "\n",
+        "# Save model\n",
+        "joblib.dump(model, \"house_price_model.joblib\")\n",
+        "print(\"Model saved as house_price_model.joblib\")\n",
+        "\n",
+        "# Optional: Predict new data\n",
+        "new_data = [[1800, 4]]\n",
+        "pred = model.predict(new_data)\n",
+        "print(f\"Predicted price for {new_data}: {pred[0]}\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "VCar2RhrW3XJ",
+        "outputId": "c42d975c-2995-4fc8-fbd9-fe0f5cbdfd19"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing ml_model.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install pandas scikit-learn joblib\n",
+        "!python ml_model.py\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "eQ6GmnlBW-sX",
+        "outputId": "046c8229-e883-4260-8764-71d5235dfbe8"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: pandas in /usr/local/lib/python3.12/dist-packages (2.2.2)\n",
+            "Requirement already satisfied: scikit-learn in /usr/local/lib/python3.12/dist-packages (1.6.1)\n",
+            "Requirement already satisfied: joblib in /usr/local/lib/python3.12/dist-packages (1.5.2)\n",
+            "Requirement already satisfied: numpy>=1.26.0 in /usr/local/lib/python3.12/dist-packages (from pandas) (2.0.2)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas) (2.9.0.post0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas) (2025.2)\n",
+            "Requirement already satisfied: scipy>=1.6.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn) (1.16.3)\n",
+            "Requirement already satisfied: threadpoolctl>=3.1.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn) (3.6.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil>=2.8.2->pandas) (1.17.0)\n",
+            "Mean Squared Error: 1300000000.0\n",
+            "R2 Score: 0.9658119658119658\n",
+            "Model saved as house_price_model.joblib\n",
+            "/usr/local/lib/python3.12/dist-packages/sklearn/utils/validation.py:2739: UserWarning: X does not have valid feature names, but DecisionTreeRegressor was fitted with feature names\n",
+            "  warnings.warn(\n",
+            "Predicted price for [[1800, 4]]: 400000.0\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git add .git"
+      ],
+      "metadata": {
+        "id": "DgWUxEF9XLgs"
+      },
+      "execution_count": 8,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile README.md\n",
+        "# Machine Learning Mini Model Project\n",
+        "\n",
+        "## Student Info\n",
+        "- Name: Irwine Kangacha\n",
+        "- Registration Number: YOUR_REG_NUMBER\n",
+        "- GitHub: wairiukoirwine\n",
+        "\n",
+        "## Project Summary\n",
+        "This project implements a simple Decision Tree Regression model to predict house prices based on size (sqft) and number of bedrooms.\n",
+        "\n",
+        "## Files\n",
+        "- ml_model.py : main Python script\n",
+        "- house_prices.csv : dataset\n",
+        "- house_price_model.joblib : saved trained model\n",
+        "- README.md : project documentation\n",
+        "\n",
+        "## Libraries Used\n",
+        "- pandas\n",
+        "- scikit-learn\n",
+        "- joblib\n",
+        "\n",
+        "## How to Run\n",
+        "1. Install dependencies:\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "K74wO5R-XQly",
+        "outputId": "7ac84512-0813-4b78-ee48-a0e5b0d6291d"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting README.md\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git config --global user.email \"wairiukoirwine@gmail.com\"\n",
+        "!git config --global user.name \"Irwine Kangacha\"\n"
+      ],
+      "metadata": {
+        "id": "K1iNx_fuXiPN"
+      },
+      "execution_count": 11,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git commit -m \"Initial commit: dataset, ML script, README\""
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "HR9Lpzs2XkNV",
+        "outputId": "703d0ac6-8a85-4910-f601-abedf29f7340"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "On branch main\n",
+            "Your branch is up to date with 'origin/main'.\n",
+            "\n",
+            "Changes not staged for commit:\n",
+            "  (use \"git add <file>...\" to update what will be committed)\n",
+            "  (use \"git restore <file>...\" to discard changes in working directory)\n",
+            "\t\u001b[31mmodified:   README.md\u001b[m\n",
+            "\n",
+            "Untracked files:\n",
+            "  (use \"git add <file>...\" to include in what will be committed)\n",
+            "\t\u001b[31mhouse_price_model.joblib\u001b[m\n",
+            "\t\u001b[31mhouse_prices.csv\u001b[m\n",
+            "\t\u001b[31mml_model.py\u001b[m\n",
+            "\n",
+            "no changes added to commit (use \"git add\" and/or \"git commit -a\")\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dfecc255"
+      },
+      "source": [
+        "!git add ."
+      ],
+      "execution_count": 13,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "c30b3ef8",
+        "outputId": "4d86e0c8-968a-487d-d534-0225cc49855e"
+      },
+      "source": [
+        "!git commit -m \"Initial commit: dataset, ML script, README\""
+      ],
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main 625b8c9] Initial commit: dataset, ML script, README\n",
+            " 4 files changed, 71 insertions(+)\n",
+            " create mode 100644 house_price_model.joblib\n",
+            " create mode 100644 house_prices.csv\n",
+            " create mode 100644 ml_model.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git push\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FliIR4QpYQHI",
+        "outputId": "549ab1b1-1419-47ca-8275-b9c6354eb135"
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "fatal: could not read Username for 'https://github.com': No such device or address\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
